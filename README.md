@@ -1,2 +1,2 @@
-# WDMD211_JSProject
-JavaScript Project for WDMD211
+# WDMD211_JSProject: Album
+Generate a Library of your favorite music using JSON and AJAX
