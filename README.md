@@ -1,4 +1,5 @@
-# WDMD211_JSProject: Albumify
+# WDMD211_JSProject: Albumify -
+A jQuery plugin of sorts. Apply the .albumify() method on a div, and watch the entire webpage transform...
 
 Using a JSON file with a list of just Albums and Artists, generate a preview library of your favorite music.
 
