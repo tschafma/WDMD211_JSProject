@@ -9,7 +9,7 @@ Features Include:
   - Close up view of Album Art
   - List of related albums and their Spotify Links
   - Artist Picture
-  - Artist's top 5 tracks
+  - Artist's top 10 tracks
 
 Possible Planned Features:
   - Search function which will dynamically add Albums given a user's search
