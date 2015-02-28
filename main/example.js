@@ -28,6 +28,14 @@ var library = {"albums": [
 				 "album": "Dive"
 				},
 				{
+				 "artist": "Nosaj Thing",
+				 "album": "Drift"
+				},
+				{
+				 "artist": "Clark",
+				 "album": "Iradelphic"
+				},
+				{
 				 "artist": "Grimes",
 				 "album": "Visions"
 				},
@@ -54,6 +62,18 @@ var library = {"albums": [
 				{
 				 "artist": "Lorde",
 				 "album": "Pure Heroine",
+				},
+				{
+				 "artist": "CHVRCHES",
+				 "album": "The Bones Of What You Believe"
+				},
+				{
+				 "artist": "The Knife",
+				 "album": "Shaking The Habitual"
+				},
+				{
+				 "artist": "Florence + The Machine",
+				 "album": "Ceremonials"
 				},
 				{
 				 "artist": "Iamamiwhoami",
