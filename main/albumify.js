@@ -11,11 +11,12 @@
 			displaySelectedAlbum();
 			document.body.style.display = "block";//Lets the user see the screen
 		});
-		
+		var playingTrack;
 		var libDiv = this[0];
 		var libList;
 		var images = [];
 		var albums = [];
+		var allTopTracks = [];
 		var albumsLength = 0;
 		var libLength = lib.albums.length;
 		
@@ -206,9 +207,9 @@
 		{
 			//Each newly selected album will clear the right side of the app
 			libList.innerHTML = "";
-			album.trackList.forEach(function(track)
+			album.trackList.forEach(function(track, i)
 			{
-				libList.innerHTML += "<div class='track'><a>" + track.name + "</a><audio controls><source src='" + track.preview_url + "'></audio><span>" + msToMinutesAndSeconds(track.duration_ms) + "</span><div style='clear: both'></div></div>";
+				libList.innerHTML += "<div class='track'><a>" + track.name + "</a>" + album.trackList[i].audio.outerHTML + "<span>" + msToMinutesAndSeconds(track.duration_ms) + "</span><div style='clear: both'></div></div>";
 			});
 		}
 		
@@ -321,15 +322,40 @@
 			});
 			
 			var artistPic = $("<img />").attr({src: album.artistsPic[0][0].url, id: "artistPic"}).css({
-				"display": "block",
+				"float": "left",
 				"margin": "0em 1em 1em",
 				"width": "60%",
 				"border-radius": "opx"
 			});
 			
+			//TOP TRACKS
+			var artistTopTracks = $("<div>").attr("id", "topTracks").css({
+				"float": "left",
+				"width": "33.5%",
+				"margin": "0 1em 1em 0"
+			});
+			
+			var topTracksHeader = $("<h3>").attr("id", "topTracksHeader").html("Top Tracks from " + album.artists[0].name).css({
+				"margin": "0",
+				"font-family": "Roboto",
+				"color": "#eee",
+				"font-weight": "100",
+				"border-bottom": "1px solid #666"
+			});
+			
+			var topTracksOl = $("<ol>").attr("id", "topTracksList").css({
+				"font-family": "Roboto",
+				"color": "#eee",
+				"margin": "1em 0 0 1.5em",
+				"padding": "0"
+			});
+			//END TOP TRACKS
+			
+			//OTHER ALBUMS
 			//Other albums div will contain artist's other albums, still in the artist block
 			var otherAlbumsDiv = $("<div>").attr("id", "otherAlbums").css({
 				"display": "block",
+				"clear": "both",
 				"margin": "0em 1em 1em"
 			});
 			
@@ -341,13 +367,83 @@
 				"font-weight": "100",
 				"display": "block"
 			});
+			//END OTHER ALBUMS
 			
 			$(otherAlbumsDiv).append(otherAlbumsHeader);
+			$(artistTopTracks).append(topTracksHeader).append(topTracksOl);
 			
-			//Initiate delay time for fading in tiny albums
-			var delay = 200;
-			//In this case I'm displaying 10 other albums. i < 5 would display only 5
+			//FOR loop that adds top tracks and related events
 			for(var i = 0; i < 10; i++)
+			{
+				//Try/catch prevents crashing if artist does not have 10 top tracks
+				try
+				{	
+					//Set an index property via data() that can be used in the anonymous function
+					var topTrackLink = $("<a>").attr({href: "", id: "topTrack" + i}).html(album.topTracks[i].name).data("index", i).css({
+						"color": "#eee",
+						"text-decoration": "none"
+					//CLICK EVENT THAT PLAYS TRACK's CORRESPONDING AUDIO
+					}).click(function(e)
+					{
+						e.preventDefault();
+						var index = $(this).data().index;
+						if(playingTrack === null || playingTrack === undefined)
+						{
+							playingTrack = album.topTracks[index].audio;
+							playingTrack.play();
+						}
+						else if(playingTrack === album.topTracks[index].audio)
+						{
+							if(!playingTrack.paused)
+							{
+								playingTrack.pause();
+							}
+							else
+							{
+								playingTrack.play();
+							}
+						}
+						else
+						{
+							if(!playingTrack.paused)
+							{
+								playingTrack.pause();
+							}
+							playingTrack = album.topTracks[index].audio;
+							playingTrack.play();
+						}
+					//HOVER EFFECTS
+					}).hover(
+						function() //HANDLER IN
+						{
+							$(this).css({
+								"text-decoration": "underline"
+							});
+						},
+						function() //HANDLER OUT
+						{
+							$(this).css({
+								"text-decoration": "none"
+							});
+						}
+					);
+					
+					var topTrackLi = $("<li>").append(topTrackLink).css({
+						"margin": "0 0 1em 0"
+					});
+					
+					$(topTracksOl).append(topTrackLi);
+				}
+				catch(e)
+				{
+					//console.log("Artist does not have 10 top tracks");
+				}
+			}
+						
+			//FOR loop that adds Other Albums
+			var delay = 200;
+			//Displays 10 albums. i < 5 would display only 5
+			for(var i = 0; i < 9; i++)
 			{
 				//Try/catch prevents failure if the artist does not have enough albums to complete the for loop
 				try
@@ -372,8 +468,8 @@
 							"background-color": "#eee",
 							"border-radius": "10px",
 							"box-shadow": "0px 2px 10px -5px #000"
-						//Apply jQuery's data method yet again to retrieved saved index.
-						//If you just use the 'i' straight from the for loop, it will be the last value set in the loop. We do not want this.
+						//Apply jQuery's 'data' method yet again to retrieved saved index.
+						//If you just use the 'i' value straight from the for loop, i will equal the latest value set in the loop (aka, 9). We do not want this.
 						}).html(album.otherAlbums[$(this).data().index].name);
 						$("body").append(hoverDiv);
 					}, function(e) // Handler OUT : removes album name
@@ -392,7 +488,7 @@
 				}
 			}
 			
-			$(artistBlock).append(artistHeader).append(artistPic).append(otherAlbumsDiv);
+			$(artistBlock).append(artistHeader).append(artistPic).append(artistTopTracks).append(otherAlbumsDiv);
 			$(libList).append(artistBlock);
 		}// END DISPLAY ARTIST INFO
 		
@@ -401,6 +497,7 @@
 		{
 			album.artistsPic = [];
 			album.otherAlbums = [];
+			album.topTracks = [];
 			
 			//Loads artists from album's id
 			//Nested AJAX request... Gets the artists' ids from the album, and uses that ID to find the related artists' info
@@ -450,19 +547,40 @@
 					dataType: 'json',
 					url: 'https://api.spotify.com/v1/artists/' + album.artists[0].id + '/albums?album_type=album&limit=20',
 					cache: true
-				}).done(function(d)
+				}).done(function(data)
 				{
-					d.items.forEach(function(otherAlbum)
+					data.items.forEach(function(otherAlbum)
 					{
 						//Is the retrieved album a repeat?
 						if(isRepeatAlbum(album, otherAlbum))
 						{
-							console.log("No item pushed")
+							//console.log("No item pushed")
 						}
 						else
 						{
 							album.otherAlbums.push(otherAlbum);
 						}
+					});
+				});
+				
+				//This Ajax Request gets the artist's top tracks
+				//Currently only retrieves first artist's tracks if there is more than one artist
+				$.ajax
+				({
+					dataType: 'json',
+					url: 'https://api.spotify.com/v1/artists/' + album.artists[0].id + '/top-tracks?country=US',
+					cache: true
+				}).done(function(data)
+				{
+					//Generate an audio object for each top track, and add that object as a property of the track
+					data.tracks.forEach(function(track, i)
+					{
+						album.topTracks.push(track);
+						var topTrack = new Audio();
+						topTrack.src = track.preview_url;
+						topTrack.preload = "none";
+						allTopTracks.push(topTrack);
+						album.topTracks[i].audio = topTrack;
 					});
 				});
 			});
@@ -514,6 +632,7 @@
 		{
 			var albumTitle = album.getElementsByTagName("h2")[0].innerHTML;
 			var artist = album.getElementsByTagName("h3")[0].innerHTML;
+			album.trackList = [];
 
 			$.ajax
 			({
@@ -522,6 +641,16 @@
 			}).done(function(data)
 			{
 				album.trackList = data.tracks.items;
+				console.log(album.trackList);
+				
+				album.trackList.forEach(function(track, i)
+				{
+					var albumTrack = new Audio();
+					albumTrack.src = track.preview_url;
+					albumTrack.controls = true;
+					albumTrack.preload = "none";
+					album.trackList[i].audio = albumTrack;
+				});
 			});
 		}
 		
@@ -585,6 +714,7 @@
 			var seconds = ((ms % 60000)/1000).toFixed(0);
 			return minutes + ":" + (seconds < 10 ? 0 : '') + seconds;
 		}
+		
 		
 		//checks for repeat albums
 		function isRepeatAlbum(album, album2)
