@@ -17,6 +17,7 @@ Possible Planned Features:
   - Possible Spotify Log-on feature, to get access to full songs and users' playlists
   - Display related artists
   - Artist Bio
+  - Custom Colors/Styles
 
 ~ Tyler Schafman 2015
   WDMD211 @ UWSP
