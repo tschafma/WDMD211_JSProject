@@ -10,19 +10,27 @@
 			displayAlbumArt();
 			displaySelectedAlbum();
 			document.body.style.display = "block";//Lets the user see the screen
+			removeLoading();
 		});
+		
+		const ALBUM_BG_COLOR = "#333";
+		const ALBUM_BG_GRADIENT_COLOR = "#333";
+		const ALBUM_BG_GRADIENT_COLOR_2 = "#194775";
+		const ALBUM_BORDER_COLOR = "#666";
+		const BLUE = "#0099FF";
+		
 		var playingTrack;
 		var libDiv = this[0];
 		var libList;
 		var images = [];
 		var albums = [];
-		var allTopTracks = [];
 		var albumsLength = 0;
 		var libLength = lib.albums.length;
 		
 		//***LOAD PAGE AND DATA***//
 		//========================================================//
 		
+		showLoading();
 		generateDivs();
 		
 		//Retrieve array of album objects made my generateDivs()
@@ -38,6 +46,40 @@
 		//***END LOADING PAGE AND DATA***//
 		
 		//***FUNCTIONS***//
+		//Show loading screen...
+		function showLoading()
+		{
+			var loadingDiv = $("<div>").css({
+				"color": "#eee",
+				"background-color": "#202020",
+				"width": window.innerWidth + "px",
+				"height": window.innerHeight + "px",
+				"position": "absolute",
+				"z-index": "100",
+				"top": "0"
+			}).attr("id", "loadingScreen");
+			
+			var loadingWords = $("<h1>").css({
+				"font-family": "Roboto",
+				"font-size": "50px",
+				"line-height": window.innerHeight + "px",
+				"width": "300px",
+				"margin": "0 auto"
+			}).html("Loading . . .");
+			
+			$(loadingDiv).append(loadingWords);
+			$("html").append(loadingDiv);
+		}
+		
+		function removeLoading()
+		{
+			var loadingScreen = $("#loadingScreen");
+			loadingScreen.fadeOut(500, function()
+			{
+				$(this).remove();
+			});
+		}
+		
 		// Appends div for every album in the json
 		function generateDivs()
 		{
@@ -74,24 +116,24 @@
 			var albumList = document.getElementById("albumList");
 			for(var i = 0; i < albumsLength; i++)
 			{
-				var albumH2 = albums[i].getElementsByTagName("h2");
-				var albumH3 = albums[i].getElementsByTagName("h3");
-				var albumImg = albums[i].getElementsByTagName("img")[0];
-				var albumVinyl = albums[i].getElementsByClassName("vinyl")[0];
-				var albumVinylHole = albums[i].getElementsByClassName("vinylHole")[0];
+				var albumH2 = albumsArray[i].getElementsByTagName("h2");
+				var albumH3 = albumsArray[i].getElementsByTagName("h3");
+				var albumImg = albumsArray[i].getElementsByTagName("img")[0];
+				var albumVinyl = albumsArray[i].getElementsByClassName("vinyl")[0];
+				var albumVinylHole = albumsArray[i].getElementsByClassName("vinylHole")[0];
 				
-				albums[i].addEventListener('mouseenter', moveVinyl, false);
-				albums[i].addEventListener('mouseleave', endMoveVinyl, false);
-				albums[i].addEventListener('click', setSelectedAlbum, false);
+				albumsArray[i].addEventListener('mouseenter', moveVinyl, false);
+				albumsArray[i].addEventListener('mouseleave', endMoveVinyl, false);
+				albumsArray[i].addEventListener('click', setSelectedAlbum, false);
 				
-				$(albums[i]).css({"margin": "0",
+				$(albumsArray[i]).css({"margin": "0",
 								"position": "relative",
 								"padding": "1em",
 								"width": "100%",
-								"border-bottom": "1px solid #6C83AD",
+								"border-bottom": "1px solid " + ALBUM_BORDER_COLOR,
 								"float": "left",
 								"clear": "left",
-								"background-color": "#3A475E",
+								"background-color": ALBUM_BG_COLOR,
 								"cursor": "pointer"
 							});
 							
@@ -130,7 +172,7 @@
 									"width": "150px",
 									"height": "150px",
 									"border-radius": "100%",
-									"background-color": "#202020",
+									"background-color": "#101010",
 									"z-index": "0"
 									})
 								
@@ -151,7 +193,7 @@
 							"height": "100vh",
 							"width": "65%",
 							"float": "right",
-							"background-color": "#404040",
+							"background-color": "#252525",
 							"z-index": "0",
 							"overflow-y": "scroll",
 							"overflow-x": "hidden"
@@ -184,12 +226,17 @@
 			selectedAlbum.removeEventListener('mouseenter', moveVinyl, false);
 			selectedAlbum.removeEventListener('mouseleave', endMoveVinyl, false);
 			$(selectedAlbum).css({
-				"background": "linear-gradient(to right, #3A475E 55%, #616C7E)",
-				"border-bottom": "1px solid #6C83AD",
-				"border-left": "0px solid #0099FF"
-			}).animate({
-				"border-left-width": "15px"
-			}, 100, "swing");
+				//"background": 'linear-gradient(to right, ' + ALBUM_BG_GRADIENT_COLOR + ' 30%, ' + ALBUM_BG_GRADIENT_COLOR_2 + ')'
+				"box-shadow": "inset -3.5em 0px 0 #0099FF"
+			})
+			
+			$(selectedAlbum).children("h2").css({
+				"color": "#00bbff"
+			})
+			
+			$(selectedAlbum).children("h3").css({
+				"color": "#00bbff"
+			})
 			
 			$(vinyl).css({
 				"left": "80px"
@@ -325,13 +372,14 @@
 				"float": "left",
 				"margin": "0em 1em 1em",
 				"width": "60%",
-				"border-radius": "opx"
+				"border": "4px solid #ccc",
+				"border-radius": "5px"
 			});
 			
 			//TOP TRACKS
 			var artistTopTracks = $("<div>").attr("id", "topTracks").css({
 				"float": "left",
-				"width": "33.5%",
+				"width": "32%",
 				"margin": "0 1em 1em 0"
 			});
 			
@@ -346,7 +394,7 @@
 			var topTracksOl = $("<ol>").attr("id", "topTracksList").css({
 				"font-family": "Roboto",
 				"color": "#eee",
-				"margin": "1em 0 0 1.5em",
+				"margin": "1em 0 0 2em",
 				"padding": "0"
 			});
 			//END TOP TRACKS
@@ -387,20 +435,43 @@
 					{
 						e.preventDefault();
 						var index = $(this).data().index;
+						var allLinks = document.getElementById("topTracksList").getElementsByTagName("a");
+						var thisLink = $("#topTrack" + index);
+						
+						resetLinks(allLinks);
+						
+						//Playing track logic
 						if(playingTrack === null || playingTrack === undefined)
 						{
 							playingTrack = album.topTracks[index].audio;
+							playingTrack.relatedLink = thisLink;
+							playingTrack.load();
 							playingTrack.play();
+							playingTrack.addEventListener('ended', endedTopTrack, false);
+							setSelectedLink(thisLink, false);
 						}
 						else if(playingTrack === album.topTracks[index].audio)
 						{
 							if(!playingTrack.paused)
 							{
 								playingTrack.pause();
+								setSelectedLink(thisLink, true);
 							}
 							else
 							{
-								playingTrack.play();
+								if(playingTrack.readyState > 3)
+								{
+									playingTrack.play();
+									playingTrack.addEventListener('ended', endedTopTrack, false);
+									setSelectedLink(thisLink, false);
+								}
+								else
+								{
+									playingTrack.load();
+									playingTrack.play();
+									playingTrack.addEventListener('ended', endedTopTrack, false);
+									setSelectedLink(thisLink, false);
+								}
 							}
 						}
 						else
@@ -408,10 +479,26 @@
 							if(!playingTrack.paused)
 							{
 								playingTrack.pause();
+								setSelectedLink(thisLink, true);
 							}
 							playingTrack = album.topTracks[index].audio;
-							playingTrack.play();
-						}
+							playingTrack.relatedLink = thisLink;
+							
+							if(playingTrack.readyState > 3)
+							{
+								playingTrack.play();
+								playingTrack.addEventListener('ended', endedTopTrack, false);
+								setSelectedLink(thisLink, false);
+							}
+							else
+							{
+								playingTrack.load();
+								playingTrack.play();
+								playingTrack.addEventListener('ended', endedTopTrack, false);
+								setSelectedLink(thisLink, false);
+							}
+						}//end playing track logic
+
 					//HOVER EFFECTS
 					}).hover(
 						function() //HANDLER IN
@@ -579,7 +666,6 @@
 						var topTrack = new Audio();
 						topTrack.src = track.preview_url;
 						topTrack.preload = "none";
-						allTopTracks.push(topTrack);
 						album.topTracks[i].audio = topTrack;
 					});
 				});
@@ -641,7 +727,6 @@
 			}).done(function(data)
 			{
 				album.trackList = data.tracks.items;
-				console.log(album.trackList);
 				
 				album.trackList.forEach(function(track, i)
 				{
@@ -665,6 +750,20 @@
 			{
 
 			});
+			
+			$(this).hover(
+			function()
+			{
+				$(this).css({
+					"background-color": "#444"
+				});
+			},
+			function()
+			{
+				$(this).css({
+					"background-color": ALBUM_BG_COLOR
+				})
+			});
 		};
 		
 		function endMoveVinyl()
@@ -676,6 +775,16 @@
 			{
 				
 			});
+		}
+		
+		//Reverts Top Track link to default color when track finishes
+		function endedTopTrack()
+		{
+			this.relatedLink.css({
+				"color": "#eee"
+			});
+			
+			this.removeEventListener('ended', endedTopTrack, false);
 		}
 		
 		//Sets the clicked album's styles and animation,
@@ -690,14 +799,19 @@
 				selectedAlbum.addEventListener('mouseenter', moveVinyl, false);
 				selectedAlbum.addEventListener('mouseleave', endMoveVinyl, false);
 				$(oldVinyl).animate({
-					left: "-=40",
+					left: "-=40px",
 				}, 100, "swing");
 				$(selectedAlbum).css({
-					"background-color": "#3A475E",
-					"background": "#3A475E"
-				}).animate({
-					"border-left-width": "0px"
-				}, 200, "swing");
+					"background-color": ALBUM_BG_COLOR,
+					"background": ALBUM_BG_COLOR,
+					"box-shadow": "none"
+				});
+				$(selectedAlbum).children("h2").css({
+					"color": "#f6f6f6"
+				});
+				$(selectedAlbum).children("h3").css({
+					"color": "#ddd"
+				});
 				
 				//Update New Selection
 				selectedAlbum = this;
@@ -714,8 +828,7 @@
 			var seconds = ((ms % 60000)/1000).toFixed(0);
 			return minutes + ":" + (seconds < 10 ? 0 : '') + seconds;
 		}
-		
-		
+			
 		//checks for repeat albums
 		function isRepeatAlbum(album, album2)
 		{
@@ -735,6 +848,34 @@
 				}
 			};
 			return false;
+		}
+		
+		//Sets a selected link for top track to blue or default depending on boolean
+		function setSelectedLink(selectedLink, selected)
+		{			
+			if(selected)
+			{
+				selectedLink.css({
+					"color": "#eee"
+				});
+			}
+			else
+			{
+				selectedLink.css({
+					"color": BLUE
+				})
+			}
+		}
+		
+		//Turns all links to default color
+		function resetLinks(allLinks)
+		{
+			for(var i = 0; i < allLinks.length; i++)
+			{
+				$(allLinks[i]).css({
+					"color": "#eee"
+				});
+			}
 		}
 	}
 }(jQuery));
