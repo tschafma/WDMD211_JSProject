@@ -1,7 +1,4 @@
 # WDMD211_JSProject: Albumify -
-A jQuery plugin of sorts. Apply the .albumify() method on a div, and watch the entire webpage transform...
-
-Using a JSON file with a list of just Albums and Artists, generate a preview library of your favorite music.
 
 All the information and media generated is taken just from Spotify's API (so far).
 
@@ -18,6 +15,26 @@ Possible Planned Features:
   - Display related artists
   - Artist Bio
   - Custom Colors/Styles
+
+# What
+
+Albumify is a full page JavaScript/jQuery App made for those interested in learning more about their favorite artists and albums in one, single location. Hear previews of an Artist's album, the artist's top tracks, view artists' pictures, album art, get links to the artist's other albums, get other related artists - All in one page in your browser!
+
+# Where
+
+Albumify runs in your browser, and is compatible with the latest versions of Chrome, FireFox, Safari, and Internet Explorer. (IE9 and previous versions are not supported).
+
+# HOW
+
+Implementing Albumify is simple. Load Albumify's script into your html (along with jQuery), and simply take an empty div and apply the method call albumify(). (Parameters are planned to be added, for changing the theme).
+
+```js
+  <body onload="$('#myDiv').albumify();">
+    <div id="myDiv"></div>
+  </body>
+```
+
+Albumify utilizes jQuery and it's many features. Albumify itself is within the 'fn' object of jQuery, and is easily applied to almost any html.
 
 ~ Tyler Schafman 2015
   WDMD211 @ UWSP
