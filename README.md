@@ -24,7 +24,7 @@ Albumify is a full page JavaScript/jQuery App made for those interested in learn
 
 Albumify runs in your browser, and is compatible with the latest versions of Chrome, FireFox, Safari, and Internet Explorer. (IE9 and previous versions are not supported).
 
-# HOW
+# How
 
 Implementing Albumify is simple. Load Albumify's script into your html (along with jQuery), and simply take an empty div and apply the method call albumify(). (Parameters are planned to be added, for changing the theme).
 
