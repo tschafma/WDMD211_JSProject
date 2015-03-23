@@ -36,5 +36,11 @@ Implementing Albumify is simple. Load Albumify's script into your html (along wi
 
 Albumify utilizes jQuery and it's many features. Albumify itself is within the 'fn' object of jQuery, and is easily applied to almost any html.
 
+# Details
+
+The first thing Albumify does is read from any json file you specify in the html. At this point in time, there needs to be a json file. Future updates will remove this requirement.
+
+Albumify currently uses only Spotify's API to acquire any available information from the 'album' and 'artist' properties specified in the json. It retrieves the information, and generates an "album" object with all the necessary information stored in as properties of that object. Albumify then generates the display from this information.
+
 ~ Tyler Schafman 2015
   WDMD211 @ UWSP
