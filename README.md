@@ -8,11 +8,11 @@ Features Include:
   - List of related albums and their Spotify Links
   - Artist Picture
   - Artist's top 10 tracks
+  - Display related artists
+  - Search function which will dynamically add Albums given a user's search (can only search albums so far)
 
 Possible Planned Features:
-  - Search function which will dynamically add Albums given a user's search
   - Possible Spotify Log-on feature, to get access to full songs and users' playlists
-  - Display related artists
   - Artist Bio
   - Custom Colors/Styles
 
