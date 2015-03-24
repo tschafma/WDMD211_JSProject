@@ -7,11 +7,14 @@
 body{
 	width: 80%;
 	min-width: 1200px;
-	margin: 0 auto;  
+	margin: 0 auto;
 }
 
 html{
 	background-color: #101010;
+}
+
+#library{
 }
 
 #headerBar{
@@ -104,9 +107,10 @@ html{
 #loadingScreen{
 	color: #eee;
 	background-color: #202020;
-	"position": "absolute",
+	position: absolute;
 	z-index: 100;
 	top: 0;
+	left: 0;
 }
 
 #loadingText{
@@ -127,7 +131,6 @@ html{
 #artistBlock{
 	position: relative;
 	float: left;
-	border-bottom: 1px solid #666;
 	width: 100%;
 	padding: 1.2em;
 }
@@ -306,9 +309,9 @@ html{
 		position: relative;
 		padding: 0;
 		float: left;
-		width: 50%;
+		width: 46%;
 		color: #f6f6f6;
-		font-size: 30px;
+		font-size: 26px;
 		font-family: Roboto;
 		font-weight: 100;
 		z-index: 1;
@@ -323,7 +326,7 @@ html{
 		position: relative;
 		padding: 0;
 		float: left;
-		width: 50%;
+		width: 47%;
 		color: #ddd;
 		font-family: Roboto;
 		font-weight: 300;
@@ -359,9 +362,8 @@ html{
 }
 
 #tracksHeader{
-	margin: 2em 0em 0em;
+	margin: 2em 2em 0em;
 	padding-bottom: 1em;
-	border-bottom: 1px solid #666;
 }
 
 #tracksH1, #tracksH2{
@@ -386,7 +388,7 @@ html{
 	float: left;
 	width: 150px;
 	height: 150px;
-	margin: 0 1em 1em 2em;
+	margin: 0 1em 1em 0em;
 	border-radius: 2px;
 }
 
@@ -398,11 +400,17 @@ html{
 	overflow-x: hidden;
 }
 
+.selectedImage{
+	cursor: pointer;
+	box-shadow: 0px 0px 25px -5px #eee;
+}
+
 .track{
-	padding: .5em 2em;
+	padding: .5em 0 0.5em 0;
+	margin: 0em 2em;
 	color: #eee;
 	font-family: Roboto;
-	border-bottom: 1px solid #666;
+	border-top: 1px solid #666;
 }
 
 	.track:hover{
@@ -413,8 +421,9 @@ html{
 	text-decoration: none;
 	color: #ccc;
 	float: left;
-	width: 15em;
+	width: 18em;
 	line-height: 2em;
+	padding-left: 1em;
 }
 
 	.track a:hover{
@@ -424,6 +433,7 @@ html{
 .track span {
 	float: right;
 	line-height: 2em;
+	padding-right: 1em;
 }
 
 .track audio{
