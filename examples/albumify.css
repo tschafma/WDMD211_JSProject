@@ -7,19 +7,110 @@
 body{
 	width: 80%;
 	min-width: 1200px;
-	margin: 0 auto;  
+	margin: 0 auto;
 }
 
 html{
 	background-color: #101010;
 }
 
+#library{
+}
+
+#headerBar{
+	height: 8vh;
+	line-height: 8vh;
+	background-color: #101010;
+	border-bottom: 1px solid #666;
+	text-align: right;
+}
+
+#headerSearch{
+	line-height: 35px;
+	height: 35px;
+	background-color: #666;
+	color: #eee;
+	border: none;
+	padding: 0em 1em;
+	font-family: Roboto;
+}
+
+#headerSearchButton{
+	line-height: 35px;
+	height: 35px;
+	width: 55px;
+	background-color: #999;
+	color: #eee;
+	font-family: Roboto;
+	font-size: 13px;
+	text-align: center;
+	display: inline-block;
+}
+
+	#headerSearchButton:hover{
+		background-color: #0099FF;
+		cursor: pointer;
+		color: #fff;
+	}
+	
+#headerTitle{
+	font-family: Roboto;
+	font-weight: 300;
+	letter-spacing: 2px;
+	float: left;
+	color: #eee;
+	margin: 0;
+	line-height: 8vh;
+}
+	
+#queryResults{
+	position: absolute;
+	top: 100px;
+	z-index: 4;
+	border-radius: 5px;
+	border: 5px solid #eee;
+	box-shadow: 3px 5px 20px -10px #000;
+	box-sizing: content-box;
+	background-color: #333;
+	color: #eee;
+	overflow-y: scroll;
+}
+
+.searchResult{
+	line-height: 24px;
+	color: #eee;
+	font-family: Roboto;
+	padding: 1em;
+	border-bottom: 1px solid #666;
+}
+
+	.searchResult:hover{
+		background-color: #666;
+		cursor: pointer;
+	}
+	
+	.searchP{
+		margin-bottom: 0;
+	}
+	
+	.searchResult p {
+		margin: 1em 0;
+	}
+	
+	.searchResult img{
+		float: left;
+		margin-right: 1em;
+		width: 100px;
+		height: 100px;
+	}
+
 #loadingScreen{
 	color: #eee;
 	background-color: #202020;
-	"position": "absolute",
+	position: absolute;
 	z-index: 100;
 	top: 0;
+	left: 0;
 }
 
 #loadingText{
@@ -40,7 +131,6 @@ html{
 #artistBlock{
 	position: relative;
 	float: left;
-	border-bottom: 1px solid #666;
 	width: 100%;
 	padding: 1.2em;
 }
@@ -90,12 +180,49 @@ html{
 #otherAlbums{
 	display: block;
 	clear: both;
-	margin: 0em 1em 0em;
+	margin: 0em 1em 2em;
 }
 
 .otherAlbumArt{
 	border-radius: 0px;
 	margin: 0 1em 0 0;
+}
+
+#otherAlbumsHeader{
+	margin: 0;
+	padding: 0 .6em .6em 0;
+	font-family: Roboto;
+	color: #eee;
+	font-weight: 100;
+	display: block;
+}
+
+#relatedArtists{
+	display: block;
+	clear: both;
+	margin: 1em 1em 0em;
+}
+
+#relatedArtistsHeader{
+	margin: 0;
+	padding: 0 .6em .6em 0;
+	font-family: Roboto;
+	color: #eee;
+	font-weight: 100;
+	display: block;
+}
+
+.relatedArtistPicWrapper{
+	overflow: hidden;
+	float: left;
+	border-radius: 0px;
+	margin: 0 1em 0 0;
+	width: 64px;
+	height: 64px;
+}
+
+.relatedArtistPic{
+	height: 74px;
 }
 
 #hoverDiv{
@@ -107,15 +234,6 @@ html{
 	background-color: #eee;
 	border-radius: 10px;
 	box-shadow: 0px 2px 10px -5px #000;
-}
-
-#otherAlbumsHeader{
-	margin: 0;
-	padding: 0 .6em .6em 0;
-	font-family: Roboto;
-	color: #eee;
-	font-weight: 100;
-	display: block;
 }
 
 .exitButton{
@@ -191,9 +309,9 @@ html{
 		position: relative;
 		padding: 0;
 		float: left;
-		width: 50%;
+		width: 46%;
 		color: #f6f6f6;
-		font-size: 30px;
+		font-size: 26px;
 		font-family: Roboto;
 		font-weight: 100;
 		z-index: 1;
@@ -208,7 +326,7 @@ html{
 		position: relative;
 		padding: 0;
 		float: left;
-		width: 50%;
+		width: 47%;
 		color: #ddd;
 		font-family: Roboto;
 		font-weight: 300;
@@ -243,9 +361,21 @@ html{
 	z-index: 2;
 }
 
+#tracksHeader{
+	margin: 2em 2em 0em;
+	padding-bottom: 1em;
+}
+
+#tracksH1, #tracksH2{
+	margin: 24px 30px;
+	font-family: Roboto;
+	color: #eee;
+	font-weight: 300;
+}
+
 #tracksList{
 	position: relative;
-	height: 100vh;
+	height: 92vh;
 	width: 65%;
 	float: right;
 	background-color: #252525;
@@ -254,19 +384,33 @@ html{
 	overflow-x: hidden;
 }
 
+#tracksAlbumArt{
+	float: left;
+	width: 150px;
+	height: 150px;
+	margin: 0 1em 1em 0em;
+	border-radius: 2px;
+}
+
 #albumList{
 	width: 35%;
 	min-width: 420px;
-	height: 100vh;
+	height: 92vh;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
 
+.selectedImage{
+	cursor: pointer;
+	box-shadow: 0px 0px 25px -5px #eee;
+}
+
 .track{
-	padding: .5em 2em;
+	padding: .5em 0 0.5em 0;
+	margin: 0em 2em;
 	color: #eee;
 	font-family: Roboto;
-	border-bottom: 1px solid #666;
+	border-top: 1px solid #666;
 }
 
 	.track:hover{
@@ -277,8 +421,9 @@ html{
 	text-decoration: none;
 	color: #ccc;
 	float: left;
-	width: 15em;
+	width: 18em;
 	line-height: 2em;
+	padding-left: 1em;
 }
 
 	.track a:hover{
@@ -288,6 +433,7 @@ html{
 .track span {
 	float: right;
 	line-height: 2em;
+	padding-right: 1em;
 }
 
 .track audio{
@@ -304,7 +450,7 @@ html{
 }
 
 ::-webkit-scrollbar-thumb {
-    border-radius: 10px;
+    border-radius: 0;
     /*background-color: #bdc3c7; */
 	background-color: #666;
 }
