@@ -49,7 +49,7 @@ var library = {"albums": [
 				},
 				{
 				 "artist": "Phantogram",
-				 "album": "Eyelid Movies",
+				 "album": "Eyelid Movies"
 				},
 				{
 				 "artist": "Panda Bear",
@@ -77,10 +77,11 @@ var library = {"albums": [
 				},
 				{
 				 "artist": "Iamamiwhoami",
-				 "album": "Blue",
+				 "album": "Blue"
+				},
+				//This one shouldnt generate anything
+				{
+					"artist": "asdfghj",
+					"album": "asdfgh"
 				}
-				/*{
-					"artist": "blah",
-					"album": "blah"
-				}*/
 			]}
