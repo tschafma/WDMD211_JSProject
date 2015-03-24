@@ -1,18 +1,46 @@
 (function($)
 {
+	/*
+		ALBUMIFY
+		--------
+			Objects__
+				album:
+					- name
+					- image
+						- src
+						- largeArt (large image file)
+						- largeArtH (height dimensions of large image)
+						- largeArtW (width dimensions of large image)
+					- tracklist[]
+						*audio
+					- artistsPic[]
+						*[image, name, id]
+					- otherAlbums[]
+						*[spotify album object]
+					- relatedArtists[]
+						*{name, image, external spotify url}
+					- topTracks[]
+						*[spotify track object]
+							- audio
+			
+			__All audio has preload set to 'none'
+			__album object is the primary; all ajax data is pushed into the corresponding album object
+			
+			__albums[] holds all of the album objects
+	*/
 	var lib = library;
 	$.fn.albumify = function()
 	{
 		//Display Functions run after all ajax requests have finished
 		$(document).ajaxStop(function()
 		{
-			$(this).off("ajaxStop");
 			displayHeaderBar();
 			albumStyle(albums);
 			displayAlbumArt();
 			displaySelectedAlbum();
-			document.body.style.display = "block";//Lets the user see the screen
+			$("body").show();
 			removeLoading();
+			$(this).off("ajaxStop");
 		});
 		
 		var ALBUM_BG_COLOR = "#333";
@@ -22,7 +50,6 @@
 		var playingTrack;
 		var libDiv = this[0];
 		var libList;
-		var images = [];
 		var albums = [];
 		var libLength = lib.albums.length;
 		
@@ -57,7 +84,7 @@
 			}).html("Loading . . .").attr("id", "loadingText");
 			
 			$(loadingDiv).append(loadingWords);
-			$("html").append(loadingDiv);
+			$("html").prepend(loadingDiv);
 		}
 		
 		function removeLoading()
@@ -72,7 +99,7 @@
 		// Appends div for every album in the json
 		function generateDivs()
 		{
-			document.body.style.display = "none"; //Stops the user seeing unfinished UI; gets set back to normal once ajax calls and styling are done
+			$("body").hide();
 			
 			var libList = "<div id='tracksList'></div>";
 			libDiv.innerHTML += libList;
@@ -169,7 +196,32 @@
 			
 			displayAlbumTracks(selectedAlbum);
 			displayArtistInfo(selectedAlbum);
-			generateAlbumArtButton(selectedAlbum);
+			//Make selected album image clickable
+			$("#tracksAlbumArt").click(function() //Click Event Handler 
+			{
+				//Div Object that blackens the background
+				var bgBlur = generateBgBlur();
+				
+				//"X" Button that closes the newly generated album window
+				var exitButton = generateExitButton();
+				
+				//Left position for the image; places it in center screen
+				var imageLeft = (window.innerWidth/2) - 320; //320 is half of the image's width
+				var newImg = $("<img />").attr("src", selectedAlbum.image.largeArt);
+				var newDiv = $("<div>").append(newImg).addClass("newAlbumArt").css({
+					"left": imageLeft + "px",
+					"width": selectedAlbum.image.largeArtW + "px",
+					"height": selectedAlbum.image.largeArtH + "px"
+				}).append(exitButton).fadeIn(500);
+				
+				$(libDiv).append(bgBlur);
+				$(libDiv).append(newDiv);
+			}).hover(function(){
+				$(this).addClass("selectedImage");
+			}, function(){
+				$(this).removeClass("selectedImage");
+			});
+			
 		}
 		
 		//Display Tracks of selected album
@@ -189,44 +241,16 @@
 			$(libList).append(headerDiv);
 			album.trackList.forEach(function(track, i)
 			{
-				libList.innerHTML += "<div class='track'><a>" + track.name + "</a>" + album.trackList[i].audio.outerHTML + "<span>" + msToMinutesAndSeconds(track.duration_ms) + "</span><div style='clear: both'></div></div>";
+				if(i === album.trackList.length - 1)
+				{
+					libList.innerHTML += "<div class='track' style='border-bottom: 1px solid #666'><a>" + track.name + "</a>" + album.trackList[i].audio.outerHTML + "<span>" + msToMinutesAndSeconds(track.duration_ms) + "</span><div style='clear: both'></div></div>";
+				}
+				else
+				{
+					libList.innerHTML += "<div class='track'><a>" + track.name + "</a>" + album.trackList[i].audio.outerHTML + "<span>" + msToMinutesAndSeconds(track.duration_ms) + "</span><div style='clear: both'></div></div>";
+				}
 			});
 		}
-		
-		//Display Album art button and set the click event for displaying selected album's art
-		function generateAlbumArtButton(album)
-		{
-			//Button Object - Very long object.
-			var btn = $("<button />").addClass("albumArtButton").html("View Album Art").click(function() //Click Event Handler 
-			{
-				//Div Object that blackens the background
-				var bgBlur = generateBgBlur();
-				
-				//"X" Button that closes the newly generated album window
-				var exitButton = generateExitButton();
-				
-				//Left position for the image; places it in center screen
-				var imageLeft = (window.innerWidth/2) - 320; //320 is half of the image's width
-				var newImg = $("<img />").attr("src", album.image.largeArt);
-				var newDiv = $("<div>").append(newImg).addClass("newAlbumArt").css({
-					"left": imageLeft + "px",
-					"width": album.image.largeArtW + "px",
-					"height": album.image.largeArtH + "px"
-				}).append(exitButton).fadeIn(500);
-				
-				$(libDiv).append(bgBlur);
-				$(libDiv).append(newDiv);
-				
-			}).hover(function() //Handler IN for album art btn
-			{
-				$(this).addClass("albumArtButtonHover");
-			}, function()  //Handler OUT for album art btn
-			{
-				$(this).removeClass("albumArtButtonHover");
-			});
-			//Finally add the button to the right side of page.
-			$(libList).append(btn);
-		}// END GENERATE ALBUM ART Button
 		
 		function displayArtistInfo(album)
 		{
@@ -350,6 +374,75 @@
 			}
 		}
 		
+		//Loads Albums Art and tracks
+		function albumLoad(albumsArray)
+		{
+			for(var i = 0; i < albumsArray.length; i++)
+			{
+				getAlbumArt(albumsArray[i]);
+			}
+		}
+		
+		// Ajax call used to retrieve album art of passed album div
+		function getAlbumArt(album)
+		{
+			if(album === null || album === undefined) { return false; }
+			var curAlbumName = $(album.getElementsByTagName("h2")[0]).html();
+			var curAlbumArtist = $(album.getElementsByTagName("h3")[0]).html();
+			
+			$.ajax
+			({
+				dataType: "json",
+				url: "https://api.spotify.com/v1/search?q=album:'" + curAlbumName + "'%20artist:'" + curAlbumArtist + "'&limit=2&type=album"
+			}).done(function(data)
+			{
+				//Prevents errors if there is a misspelling in the JSON
+				if(data.albums.items.length <= 0)
+				{
+					$(album).remove();
+					//get the new list of albums without the one just removed
+					albums = document.getElementsByClassName("album");
+				}
+				else
+				{
+					var image = new Image(150, 150);
+					image.src = (data.albums.items[0].images[1].url);
+					image.largeArt = (data.albums.items[0].images[0].url);
+					image.largeArtW = (data.albums.items[0].images[0].width);
+					image.largeArtH = (data.albums.items[0].images[0].height);
+					album.id = data.albums.items[0].id;
+					album.name = (curAlbumName);
+					album.image = image;
+					loadTracks(album);
+					loadArtistInfo(album);
+				}
+			});
+		}
+		
+		//Loads the tracks of an album
+		function loadTracks(album)
+		{
+			album.trackList = [];
+
+			$.ajax
+			({
+				dataType: "json",
+				url: "https://api.spotify.com/v1/albums/" + album.id
+			}).done(function(data)
+			{
+				album.trackList = data.tracks.items;
+				
+				album.trackList.forEach(function(track, i)
+				{
+					var albumTrack = new Audio();
+					albumTrack.src = track.preview_url;
+					albumTrack.controls = true;
+					albumTrack.preload = "none";
+					album.trackList[i].audio = albumTrack;
+				});
+			});
+		}
+		
 		//Load Artist Information
 		function loadArtistInfo(album)
 		{
@@ -466,78 +559,6 @@
 			});
 		}
 		
-		//Loads Albums Art and tracks
-		function albumLoad(albumsArray)
-		{
-			for(var i = 0; i < albumsArray.length; i++)
-			{
-				getAlbumArt(albumsArray[i]);
-			}
-		}// END STYLING ALBUMS
-		
-		// Ajax call used to retrieve album art of passed album div
-		function getAlbumArt(album)
-		{
-			if(album === null || album === undefined) { return false; }
-			var curAlbumName = $(album.getElementsByTagName("h2")[0]).html();
-			var curAlbumArtist = $(album.getElementsByTagName("h3")[0]).html();
-			
-			$.ajax
-			({
-				dataType: "json",
-				url: "https://api.spotify.com/v1/search?q=album:'" + curAlbumName + "'%20artist:'" + curAlbumArtist + "'&limit=2&type=album"
-			}).done(function(data)
-			{
-				//Prevents errors if there is a misspelling in the JSON
-				if(data.albums.items.length <= 0)
-				{
-					$(album).remove();
-					//get the new list of albums without the one just removed
-					albums = document.getElementsByClassName("album");
-				}
-				else
-				{
-					var image = new Image(150, 150);
-					image.src = (data.albums.items[0].images[1].url);
-					image.largeArt = (data.albums.items[0].images[0].url);
-					image.largeArtW = (data.albums.items[0].images[0].width);
-					image.largeArtH = (data.albums.items[0].images[0].height);
-					image.album = (curAlbumName);
-					image.artist = (curAlbumArtist);
-					images.push(image);
-					album.id = data.albums.items[0].id;
-					album.name = (curAlbumName);
-					album.image = image;
-					loadTracks(album);
-					loadArtistInfo(album);
-				}
-			});
-		}
-		
-		//Loads the tracks of an album
-		function loadTracks(album)
-		{
-			album.trackList = [];
-
-			$.ajax
-			({
-				dataType: "json",
-				url: "https://api.spotify.com/v1/albums/" + album.id
-			}).done(function(data)
-			{
-				album.trackList = data.tracks.items;
-				
-				album.trackList.forEach(function(track, i)
-				{
-					var albumTrack = new Audio();
-					albumTrack.src = track.preview_url;
-					albumTrack.controls = true;
-					albumTrack.preload = "none";
-					album.trackList[i].audio = albumTrack;
-				});
-			});
-		}
-		
 		// EVENT LISTENERS
 		//Animation for the Vinyl of an album
 		function moveVinyl()
@@ -576,6 +597,7 @@
 			});
 		}
 		
+		//Displays div with artist/album name on hover
 		function elementHoverIn(e)
 		{
 			var $this = $(this);
@@ -603,6 +625,8 @@
 			$("#hoverDiv").remove();
 		}
 		
+		//*SEARCH FUNCTIONS*//
+		//Initiate search with value in search bar
 		function searchQuery()
 		{
 			var query = $("#headerSearch").val();
@@ -618,6 +642,7 @@
 			ajaxSearch(query);
 		}
 		
+		//Get possible results via AJAX with the search term
 		function ajaxSearch(searchTerm)
 		{
 			$.ajax({
@@ -642,6 +667,7 @@
 							var searchResultImg = $("<img/>").attr("src", data.albums.items[i].images[1].url);
 							$(searchResult).append(searchResultImg);
 							$(searchResult).append("<p>" + data.albums.items[i].name + "</p>");
+							//With the found albums, find the matching artist
 							findArtist(albumID, searchResult);
 							resultsDiv.append(searchResult);
 						}
@@ -655,6 +681,7 @@
 			});
 		}
 		
+		//Find the artist information from the found albums
 		function findArtist(albumID, appendee)
 		{
 			$.ajax({
@@ -674,6 +701,7 @@
 			});
 		}
 		
+		//Adds the album to the library if the user selects it
 		function initAlbumCreation(e)
 		{
 			e.preventDefault();
